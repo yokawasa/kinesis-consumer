@@ -2,13 +2,15 @@ package com.github.yokawasa.kinesis;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import software.amazon.awssdk.regions.Region;
 import org.apache.commons.lang3.ObjectUtils;
 
-// Reference doc and code
-// https://docs.aws.amazon.com/streams/latest/dev/kcl-migration.html#client-configuration-removals
-// https://github.com/awslabs/amazon-kinesis-client/blob/bd96580b0ac2ae45f43325e93b20d0d8b6be3ecf/amazon-kinesis-client-multilang/src/main/java/software/amazon/kinesis/coordinator/KinesisClientLibConfiguration.java
+/** 
+* NOTICE
+* Referenced code and doc are the following:
+* https://docs.aws.amazon.com/streams/latest/dev/kcl-migration.html#client-configuration-removals
+* https://github.com/awslabs/amazon-kinesis-client/blob/bd96580b0ac2ae45f43325e93b20d0d8b6be3ecf/amazon-kinesis-client-multilang/src/main/java/software/amazon/kinesis/coordinator/KinesisClientLibConfiguration.java
+*/
 
 public class KinesisConfig {
 

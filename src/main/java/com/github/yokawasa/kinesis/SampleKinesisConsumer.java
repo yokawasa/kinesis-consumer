@@ -1,7 +1,3 @@
-// code from
-// https://docs.aws.amazon.com/ja_jp/streams/latest/dev/building-enhanced-consumers-kcl-java.html
-// https://docs.aws.amazon.com/ja_jp/streams/latest/dev/building-enhanced-consumers-api.html
-
 package com.github.yokawasa.kinesis;
 
 import java.io.BufferedReader;
@@ -40,6 +36,12 @@ import software.amazon.kinesis.lifecycle.events.ShutdownRequestedInput;
 import software.amazon.kinesis.processor.ShardRecordProcessor;
 import software.amazon.kinesis.processor.ShardRecordProcessorFactory;
 import software.amazon.kinesis.retrieval.polling.PollingConfig;
+
+/**
+* NOTICE
+* The code is originally from the following AWS official sample and modified:
+* https://docs.aws.amazon.com/ja_jp/streams/latest/dev/building-enhanced-consumers-kcl-java.html
+*/
 
 /**
  * This class will run a simple app that uses the KCL to read data.
