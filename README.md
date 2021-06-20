@@ -1,74 +1,101 @@
-# Amazon Kinesis Java code examples
+# amazon-kinesis-consumer
 
-This README discusses how to run and test the Java code examples for Amazon Kinesis.
+Amazon Kinesis Sample Consumer Application
 
-## Running the Amazon Kinesis Java files
+## Quickstart
 
-**IMPORTANT**
+### Create Kinesis Data Stream
 
-The Java examples perform AWS operations for the account and AWS Region for which you've specified credentials, and you may incur AWS service charges by running them. See the [AWS Pricing page](https://aws.amazon.com/pricing/) for details about the charges you can expect for a given service and operation.
+You can create the the Kinesis data stream with awscli.
 
-Some of these examples perform *destructive* operations on AWS resources, such as deleting a data stream. **Be very careful** when running an operation that
-deletes or modifies AWS resources in your account. It's best to create separate test-only resources when experimenting with these examples.
+```bash
+STREAM_NAME=test-kds01
+REGION=ap-northeast-1
 
-To run these examples, you can setup your development environment to use Apache Maven or Gradle to configure and build AWS SDK for Java projects. For more information, 
-see [Get started with the AWS SDK for Java 2.x](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/get-started.html).
+aws kinesis create-stream --stream-name ${STREAM_NAME} --shard-count 1 --region ${REGION}
 
+# describe the stream
+aws kinesis describe-stream-summary --stream-name ${STREAM_NAME}
 
- ## Testing the Amazon Kinesis files
+# list
+aws kinesis list-streams
+```
 
-You can test the Java code examples for Amazon Kinesis by running a test file named **KinesisServiceTest**. This file uses JUnit 5 to run the JUnit tests and is located in the **src/test/java** folder. For more information, see [https://junit.org/junit5/](https://junit.org/junit5/).
+ref: [Perform Basic Kinesis Data Stream Operations Using the AWS CLI](https://docs.aws.amazon.com/streams/latest/dev/fundamental-stream.html)
 
-You can run the JUnit tests from a Java IDE, such as IntelliJ, or from the command line by using Maven. As each test is run, you can view messages that inform you if the various tests succeed or fail. For example, the following message informs you that Test 3 passed.
+### Configurations
 
-	Test 3 passed
+Configure the consumer appliation with enviromental variables and save the file (let's say `myconfig.env`)
 
-**WARNING**: _Running these JUnit tests manipulates real Amazon resources and may incur charges on your account._
+```bash
+export KINESIS_APPLICATION_NAME="<kinesis application name>"
+export KINESIS_STREAM_NAME="<kinesis stream name>"
+export KINESIS_REGION="<kinesis region: ap-northeast-1>"
+export KINESIS_INITIAL_POSITION_IN_STREAM="<initial Position In Stream: LATEST or TRIM_HORIZON>"
+export KINESIS_FAILOVER_TIME_MILLIS="<failover time millis: default 10000>"
+export KINESIS_MAX_RECORDS="<max records to fetch per Kinesis getRecords call: default 10000>"
 
- ### Properties file
-Before running the Amazon Kinesis JUnit tests, you must define values in the **config.properties** file located in the **resources** folder. This file contains values that are required to run the JUnit tests. For example, you define an instance name used for various tests. If you do not define all values, the JUnit tests fail.
+export JAVA_HEAP_XMX=512M
+export JAVA_HEAP_XMS=512M
+```
 
-Define these values to successfully run the JUnit tests:
+### Create the package
 
-- **streamName** - A data stream name used in the tests.  
-- **existingDataStream** – An existing data stream that is used in the tests. Ensure that this is a different value from **streamName**.
+Build and create the package
+```
+make 
+```
+or You can create the package with `mvn` command
+```
+mvn package
+```
 
-### Command line
-To run the JUnit tests from the command line, you can use the following command.
+### Execute the consumer
 
-		mvn test
+You can run the consumer app with the configuration files (`myconfig.env`)
 
-You will see output from the JUnit tests, as shown here.
+```bash
+./helpers/run_local_consumer.sh myconfig.env
+```
 
-	[INFO] -------------------------------------------------------
-	[INFO]  T E S T S
-	[INFO] -------------------------------------------------------
-	[INFO] Running KinesisServiceTest
-	Test 1 passed
-	Test 2 passed
-	...
-	Done!
-	[INFO] Results:
-	[INFO]
-	[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0
-	[INFO]
-	INFO] --------------------------------------------
-	[INFO] BUILD SUCCESS
-	[INFO]--------------------------------------------
-	[INFO] Total time:  12.003 s
-	[INFO] Finished at: 2020-02-10T14:25:08-05:00
-	[INFO] --------------------------------------------
+Or you can run a conatinized consumer app like this
 
-### Unsuccessful tests
+```bash
+./helpers/run_docker_consumer.sh myconfig.env
+```
 
-If you do not define the correct values in the properties file, your JUnit tests are not successful. You will see an error message such as the following. You need to double-check the values that you set in the properties file and run the tests again.
+Here is an sample output:
+```
+./helpers/run_docker_consumer.sh ./myconfig.env 
 
-	[INFO]
-	[INFO] --------------------------------------
-	[INFO] BUILD FAILURE
-	[INFO] --------------------------------------
-	[INFO] Total time:  19.038 s
-	[INFO] Finished at: 2020-02-10T14:41:51-05:00
-	[INFO] ---------------------------------------
-	[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:2.22.1:test (default-test) on project S3J2Project:  There are test failures.
-	[ERROR];
+21-06-20 05:06:18:424  INFO main kinesis.KinesisConfig:111 - applkicationName: mykclapp01 [env KINESIS_APPLICATION_NAME: mykclapp01]
+21-06-20 05:06:18:455  INFO main kinesis.KinesisConfig:113 - streamName: test-kds01 [env KINESIS_STREAM_NAME: test-kds01]
+21-06-20 05:06:18:456  INFO main kinesis.KinesisConfig:115 - region: ap-northeast-1 [env KINESIS_REGION: ap-northeast-1]
+21-06-20 05:06:18:458  INFO main kinesis.KinesisConfig:117 - initialPositionInStream: LATEST [env KINESIS_INITIAL_POSITION_IN_STREAM: null]
+21-06-20 05:06:18:460  INFO main kinesis.KinesisConfig:119 - failoverTimeMillis: 10000 [env KINESIS_FAILOVER_TIME_MILLIS: null]
+21-06-20 05:06:18:462  INFO main kinesis.KinesisConfig:121 - maxRecords: 10000 [env KINESIS_MAX_RECORDS: null]
+21-06-20 05:06:22:810  INFO main dynamodb.DynamoDBLeaseCoordinator:170 - With failover time 10000 ms and epsilon 25 ms, LeaseCoordinator will renew leases every 3308 ms, takeleases every 20050 ms, process maximum of 2147483647 leases and steal 1 lease(s) at a time.
+Press enter to shutdown
+21-06-20 05:06:22:843  INFO Thread-1 coordinator.Scheduler:263 - Initialization attempt 1
+21-06-20 05:06:22:846  INFO Thread-1 coordinator.Scheduler:264 - Initializing LeaseCoordinator
+21-06-20 05:06:29:580  INFO Thread-1 coordinator.Scheduler:269 - Syncing Kinesis shard info
+21-06-20 05:06:32:079  INFO Thread-1 coordinator.Scheduler:280 - Starting LeaseCoordinator
+21-06-20 05:06:32:311  INFO Thread-1 coordinator.Scheduler:238 - Initialization complete. Starting worker loop.
+21-06-20 05:06:52:577  INFO LeaseCoordinator-0000 dynamodb.DynamoDBLeaseTaker:397 - Worker 2d53ae8c-8669-4eb4-b445-3383a449f28b saw 1 total leases, 1 available leases, 1 workers. Target is 1 leases, I have 0 leases, I will take 1 leases
+21-06-20 05:06:52:869  INFO LeaseCoordinator-0000 dynamodb.DynamoDBLeaseTaker:203 - Worker 2d53ae8c-8669-4eb4-b445-3383a449f28b successfully took 1 leases: shardId-000000000000
+21-06-20 05:06:53:649  INFO Thread-1 coordinator.Scheduler:682 - Created new shardConsumer for : ShardInfo(shardId=shardId-000000000000, concurrencyToken=857c1159-00e8-421d-b78a-14740591945c, parentShardIds=[], checkpoint={SequenceNumber: 49618728439127861604111470615056250046941505864572338178,SubsequenceNumber: 0})
+21-06-20 05:06:53:657  INFO Thread-1 coordinator.DiagnosticEventLogger:41 - Current thread pool executor state: ExecutorStateEvent(executorName=SchedulerThreadPoolExecutor, currentQueueSize=0, activeThreads=1, coreThreads=0, leasesOwned=1, largestPoolSize=1, maximumPoolSize=2147483647)
+21-06-20 05:06:53:676  INFO ShardRecordProcessor-0000 lifecycle.BlockOnParentShardTask:78 - No need to block on parents [] of shard shardId-000000000000
+21-06-20 05:06:54:826  INFO ShardRecordProcessor-0000 polling.KinesisDataFetcher:182 - Initializing shard shardId-000000000000 with 49618728439127861604111470615056250046941505864572338178
+21-06-20 05:06:55:069  INFO ShardRecordProcessor-0000 polling.PrefetchRecordsPublisher:237 - shardId-000000000000 : Starting prefetching thread.
+21-06-20 05:06:55:128  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:186 - Initializing @ Sequence: {SequenceNumber: 49618728439127861604111470615056250046941505864572338178,SubsequenceNumber: 0}
+21-06-20 05:07:03:189  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:202 - Processing 8 record(s)
+21-06-20 05:07:03:198  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473221600657979110386752521502722
+21-06-20 05:07:03:200  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473222873656867164591479645536258
+21-06-20 05:07:03:200  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473224105552277351898814829559810
+21-06-20 05:07:03:200  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473225349536945735352373041168386
+21-06-20 05:07:03:200  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473226893335217383234035299385346
+21-06-20 05:07:03:204  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473228300524871414662600815804418
+21-06-20 05:07:03:204  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473229679909231594954626594504706
+21-06-20 05:07:03:205  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473231230961058160524063900958722
+```
