@@ -1,0 +1,8 @@
+--- 
+files:
+  - path: src/main/java/com/github/yokawasa/kinesis/SampleKinesisConsumer.java
+    services:
+      - kinesis
+  - path: src/main/java/com/github/yokawasa/kinesis/KinesisConfig.java
+    services:
+      - kinesis
