@@ -1,12 +1,28 @@
-# amazon-kinesis-consumer
+# kinesis-consumer
 
-Amazon Kinesis Sample Consumer Application
+Sample [KCL 2.X consumer](https://docs.aws.amazon.com/streams/latest/dev/enhanced-consumers.html) for AWS Kinesis streams. The consumer is configurable via environmental variables and can be containerized (dockerfile for it is provided), which can be run anywhere.
+
+
+**Table of Contents**
+<!-- TOC -->
+
+- [kinesis-consumer](#kinesis-consumer)
+  - [Quickstart](#quickstart)
+    - [Create Kinesis Data Stream](#create-kinesis-data-stream)
+    - [Configurations](#configurations)
+    - [Create the package](#create-the-package)
+    - [Run the consumer](#run-the-consumer)
+  - [Publish data to Kinesis](#publish-data-to-kinesis)
+
+<!-- /TOC -->
 
 ## Quickstart
 
+Before running the samples, you'll want to make sure that your environment is configured to allow the samples to use your [AWS Security Credentials](https://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html).
+
 ### Create Kinesis Data Stream
 
-You can create the the Kinesis data stream with awscli.
+You can create the the Kinesis data stream with AWS CLI.
 
 ```bash
 STREAM_NAME=test-kds01
@@ -50,7 +66,7 @@ or You can create the package with `mvn` command
 mvn package
 ```
 
-### Execute the consumer
+### Run the consumer
 
 You can run the consumer app with the configuration files (`myconfig.env`)
 
@@ -99,3 +115,23 @@ Press enter to shutdown
 21-06-20 05:07:03:204  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473229679909231594954626594504706
 21-06-20 05:07:03:205  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473231230961058160524063900958722
 ```
+
+## Publish data to Kinesis
+
+Using a Golang tool named [kinesis-bulk-loader](https://github.com/yokawasa/kinesis-bulk-loader), you can put bulk messages in parallel to AWS Kinesis Data Stream.
+
+You can download and run the tool like this:
+
+```
+# Clone the tool repository
+git clone https://github.com/yokawasa/kinesis-bulk-loader.git
+cd kinesis-bulk-loader
+
+# Download the compiled command with downloader
+./downloader
+
+# Run the downloaded command
+kinesis-bulk-loader -stream test-kds01 -k hoge -m test -c 10 -n 100 -verbose
+```
+
+For more information, see GitHub [kinesis-bulk-loader](https://github.com/yokawasa/kinesis-bulk-loader).
