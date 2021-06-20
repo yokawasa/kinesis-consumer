@@ -19,11 +19,11 @@ IMAGE_TAG=${VERSION}
 AWS_PROFILE_NAME=myenv
 
 docker run --rm -it \
-		-v ${HOME}/.aws:/root/.aws \
+    -v ${HOME}/.aws:/root/.aws \
     -e AWS_PROFILE=${AWS_PROFILE_NAME} \
     -e KINESIS_APPLICATION_NAME=${KINESIS_APPLICATION_NAME} \
     -e KINESIS_STREAM_NAME=${KINESIS_STREAM_NAME} \
     -e KINESIS_REGION=${KINESIS_REGION} \
     -e JAVA_HEAP_XMX=512M \
     -e JAVA_HEAP_XMS=512M \
-		${IMAGE_REPO}:${IMAGE_TAG}
+    ${IMAGE_REPO}:${IMAGE_TAG}
