@@ -7,12 +7,12 @@ Sample [KCL 2.X consumer](https://docs.aws.amazon.com/streams/latest/dev/enhance
 <!-- TOC -->
 
 - [kinesis-consumer](#kinesis-consumer)
-  - [Quickstart](#quickstart)
-    - [Create Kinesis Data Stream](#create-kinesis-data-stream)
-    - [Configurations](#configurations)
-    - [Create the package](#create-the-package)
-    - [Run the consumer](#run-the-consumer)
-  - [Publish data to Kinesis](#publish-data-to-kinesis)
+	- [Quickstart](#quickstart)
+		- [Create Kinesis Data Stream](#create-kinesis-data-stream)
+		- [Configurations](#configurations)
+		- [Create the package](#create-the-package)
+		- [Run the consumer](#run-the-consumer)
+	- [Publish data to Kinesis](#publish-data-to-kinesis)
 
 <!-- /TOC -->
 
@@ -74,15 +74,17 @@ You can run the consumer app with the configuration files (`myconfig.env`)
 ./helpers/run_local_consumer.sh myconfig.env
 ```
 
-Or you can run a conatinized consumer app like this
+Or you can run a conatinized consumer app. You need to give the following 2 args
+- App configuration file (`myconfig.env`)
+- AWS Profile name that you use to interact with AWS resources (`my-aws-profile`)
 
 ```bash
-./helpers/run_docker_consumer.sh myconfig.env
+./helpers/run_docker_consumer.sh myconfig.env my-aws-profile
 ```
 
 Here is an sample output:
 ```
-./helpers/run_docker_consumer.sh ./myconfig.env 
+./helpers/run_docker_consumer.sh ./myconfig.env my-aws-profile
 
 21-06-20 05:06:18:424  INFO main kinesis.KinesisConfig:111 - applkicationName: mykclapp01 [env KINESIS_APPLICATION_NAME: mykclapp01]
 21-06-20 05:06:18:455  INFO main kinesis.KinesisConfig:113 - streamName: test-kds01 [env KINESIS_STREAM_NAME: test-kds01]
