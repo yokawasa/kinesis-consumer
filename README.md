@@ -125,12 +125,8 @@ Using a Golang tool named [kinesis-bulk-loader](https://github.com/yokawasa/kine
 You can download and run the tool like this:
 
 ```
-# Clone the tool repository
-git clone https://github.com/yokawasa/kinesis-bulk-loader.git
-cd kinesis-bulk-loader
-
-# Download the compiled command with downloader
-./downloader
+# Download the compiled command
+curl -sS https://raw.githubusercontent.com/yokawasa/kinesis-bulk-loader/main/downloader | bash --
 
 # Run the downloaded command
 kinesis-bulk-loader -stream test-kds01 -k hoge -m test -c 10 -n 100 -verbose
