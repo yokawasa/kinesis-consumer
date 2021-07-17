@@ -3,6 +3,7 @@ package com.github.yokawasa.kinesis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.kinesis.common.InitialPositionInStream;
 import org.apache.commons.lang3.ObjectUtils;
 
 /** 
@@ -22,6 +23,11 @@ public class KinesisConfig {
     }
 
     /**
+     * Idle time between record reads in milliseconds.
+     */ 
+    public static final long DEFAULT_IDLETIME_BETWEEN_READS_MILLIS = 1000L;
+
+    /**
      * Fail over time in milliseconds. A worker which does not renew it's lease within this time interval
      * will be regarded as having problems and it's shards will be assigned to other workers.
      * For applications that have a large number of shards, this msy be set to a higher number to reduce
@@ -38,6 +44,7 @@ public class KinesisConfig {
     private String streamName;
     private Region region;
     private String initialPositionInStream; //  LATEST or TRIM_HORIZON. 
+    private long idleTimeBetweenReadsInMillis;
     private long failoverTimeMillis;
     private int maxRecords;
 
@@ -55,6 +62,9 @@ public class KinesisConfig {
 
         value = System.getenv("KINESIS_INITIAL_POSITION_IN_STREAM");
         this.initialPositionInStream = value !=null ? value : "LATEST";
+
+        value = System.getenv("KINESIS_IDLETIME_BETWEEN_READS_MILLIS");
+        this.idleTimeBetweenReadsInMillis = value !=null ? Long.valueOf(value) : DEFAULT_IDLETIME_BETWEEN_READS_MILLIS;
 
         value = System.getenv("KINESIS_FAILOVER_TIME_MILLIS");
         this.failoverTimeMillis = value !=null ? Long.valueOf(value) : DEFAULT_FAILOVER_TIME_MILLIS;
@@ -87,8 +97,22 @@ public class KinesisConfig {
    /**
      * @return Name of the initial Position In Stream
      */
-    public String getInitialPositionInStream() {
-        return this.initialPositionInStream;
+    public InitialPositionInStream getInitialPositionInStream() {
+        switch (this.initialPositionInStream) {
+            case "LATEST":
+                return InitialPositionInStream.LATEST;
+            case "TRIM_HORIZON":
+                return InitialPositionInStream.TRIM_HORIZON;
+            default:
+                throw new IllegalArgumentException("Invalid InitialPosition");
+        }
+    }
+
+   /**
+     * @return Idle time between record reads in milliseconds
+     */
+    public long getIdleTimeBetweenReadsInMillis() {
+        return idleTimeBetweenReadsInMillis;
     }
 
    /**
@@ -116,6 +140,8 @@ public class KinesisConfig {
                 this.streamName,System.getenv("KINESIS_STREAM_NAME")));
         log.info(String.format("region: %s [env KINESIS_REGION: %s]",
                 this.region.toString(),System.getenv("KINESIS_REGION")));
+        log.info(String.format("idleTimeBetweenReadsInMillis: %d [env KINESIS_IDLETIME_BETWEEN_READS_MILLIS: %s]",
+                this.idleTimeBetweenReadsInMillis,System.getenv("KINESIS_IDLETIME_BETWEEN_READS_MILLIS")));
         log.info(String.format("initialPositionInStream: %s [env KINESIS_INITIAL_POSITION_IN_STREAM: %s]",
                 this.initialPositionInStream,System.getenv("KINESIS_INITIAL_POSITION_IN_STREAM")));
         log.info(String.format("failoverTimeMillis: %d [env KINESIS_FAILOVER_TIME_MILLIS: %s]",

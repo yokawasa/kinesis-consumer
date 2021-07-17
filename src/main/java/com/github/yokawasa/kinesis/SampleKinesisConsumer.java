@@ -24,6 +24,8 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
 import software.amazon.awssdk.services.kinesis.KinesisAsyncClient;
 import software.amazon.kinesis.common.ConfigsBuilder;
 import software.amazon.kinesis.common.KinesisClientUtil;
+import software.amazon.kinesis.common.InitialPositionInStream;
+import software.amazon.kinesis.common.InitialPositionInStreamExtended;
 import software.amazon.kinesis.coordinator.Scheduler;
 import software.amazon.kinesis.exceptions.InvalidStateException;
 import software.amazon.kinesis.exceptions.ShutdownException;
@@ -108,16 +110,23 @@ public class SampleKinesisConsumer {
         Scheduler scheduler = new Scheduler(
                 configsBuilder.checkpointConfig(),
                 configsBuilder.coordinatorConfig(),
-                configsBuilder.leaseManagementConfig(),
+                configsBuilder.leaseManagementConfig()
+                    .failoverTimeMillis(this.config.getFailoverTimeMillis()),
                 configsBuilder.lifecycleConfig(),
                 configsBuilder.metricsConfig(),
                 configsBuilder.processorConfig(),
-                configsBuilder.retrievalConfig().retrievalSpecificConfig(
+                configsBuilder.retrievalConfig()
+                    .retrievalSpecificConfig(
                         new PollingConfig(
                             this.config.getStreamName(),
-                            this.kinesisClient 
+                            this.kinesisClient
                         )
+                        .maxRecords(this.config.getMaxRecords())
+                        .idleTimeBetweenReadsInMillis(this.config.getIdleTimeBetweenReadsInMillis())
                     )
+                    .initialPositionInStreamExtended(
+                        InitialPositionInStreamExtended.newInitialPosition(this.config.getInitialPositionInStream())
+                    ) 
             );
 
         /**
