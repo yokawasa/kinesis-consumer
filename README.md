@@ -7,12 +7,12 @@ Sample [KCL 2.X consumer](https://docs.aws.amazon.com/streams/latest/dev/enhance
 <!-- TOC -->
 
 - [kinesis-consumer](#kinesis-consumer)
-	- [Quickstart](#quickstart)
-		- [Create Kinesis Data Stream](#create-kinesis-data-stream)
-		- [Configurations](#configurations)
-		- [Create the package](#create-the-package)
-		- [Run the consumer](#run-the-consumer)
-	- [Publish data to Kinesis](#publish-data-to-kinesis)
+  - [Quickstart](#quickstart)
+    - [Create Kinesis Data Stream](#create-kinesis-data-stream)
+    - [Configurations](#configurations)
+    - [Create the package](#create-the-package)
+    - [Run the consumer](#run-the-consumer)
+  - [Publish data to Kinesis](#publish-data-to-kinesis)
 
 <!-- /TOC -->
 
@@ -41,12 +41,27 @@ ref: [Perform Basic Kinesis Data Stream Operations Using the AWS CLI](https://do
 
 ### Configurations
 
-Configure the consumer appliation with enviromental variables and save the file (let's say `myconfig.env`)
+Enviroment Variables to configure the Kinesis Consumer
+
+|Parameter|Required|Default Value|Description|
+|:--:|:--:|:--:|:--|
+|`KINESIS_APPLICATION_NAME`|`true`| `""`| Kinesis KCL Application name |
+|`KINESIS_STREAM_NAME`|`true`|`""`| Kinesis Stream Name |
+|`KINESIS_REGION`|`false`|`"ap-northeast-1"`| Kinesis Region |
+|`KINESIS_INITIAL_POSITION_IN_STREAM`|`false`|`"LATEST"`| Initial Position in Stream: `LATEST` or `TRIM_HORIZON` |
+|`KINESIS_IDLETIME_BETWEEN_READS_MILLIS`|`false`|`1000` | Idle time between record reads in milliseconds |
+|`KINESIS_FAILOVER_TIME_MILLIS`|`false`|`10000` | Fail over time in milliseconds. A worker which does not renew it's lease within this time interval will be regarded as having problems and it's shards will be assigned to other workers. For applications that have a large number of shards, this msy be set to a higher number to reduce the number of DynamoDB IOPS required for tracking leases |
+|`KINESIS_MAX_RECORDS`|`false`|`10000`| Max records to fetch per Kinesis getRecords call |
+
+
+
+Configure the consumer with enviromental variables like this and save the file (let's say `myconfig.env`)
 
 ```bash
 export KINESIS_APPLICATION_NAME="<kinesis application name>"
 export KINESIS_STREAM_NAME="<kinesis stream name>"
 export KINESIS_REGION="<kinesis region: ap-northeast-1>"
+export KINESIS_IDLETIME_BETWEEN_READS_MILLIS="<idle time between record reads in milliseconds: default 1000>"
 export KINESIS_INITIAL_POSITION_IN_STREAM="<initial Position In Stream: LATEST or TRIM_HORIZON>"
 export KINESIS_FAILOVER_TIME_MILLIS="<failover time millis: default 10000>"
 export KINESIS_MAX_RECORDS="<max records to fetch per Kinesis getRecords call: default 10000>"
