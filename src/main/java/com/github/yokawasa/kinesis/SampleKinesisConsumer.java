@@ -3,6 +3,10 @@ package com.github.yokawasa.kinesis;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharacterCodingException;
+import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -38,7 +42,7 @@ import software.amazon.kinesis.lifecycle.events.ShutdownRequestedInput;
 import software.amazon.kinesis.processor.ShardRecordProcessor;
 import software.amazon.kinesis.processor.ShardRecordProcessorFactory;
 import software.amazon.kinesis.retrieval.polling.PollingConfig;
-
+import software.amazon.kinesis.retrieval.KinesisClientRecord;
 /**
 * NOTICE
 * The code is originally from the following AWS official sample and modified:
@@ -53,6 +57,7 @@ public class SampleKinesisConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(SampleKinesisConsumer.class);
 
+    private static final CharsetDecoder decoder = Charset.forName("UTF-8").newDecoder();
     /**
      * Invoke the main method: all config parameters should be given with enviroment variables
      * Verifies valid inputs and then starts running the app.
@@ -211,12 +216,40 @@ public class SampleKinesisConsumer {
             MDC.put(SHARD_ID_MDC_KEY, shardId);
             try {
                 log.info("Processing {} record(s)", processRecordsInput.records().size());
-                processRecordsInput.records().forEach(r -> log.info("Processing record pk: {} -- Seq: {}", r.partitionKey(), r.sequenceNumber()));
-            } catch (Throwable t) {
+                processRecordsInput.records().forEach(r ->processSingleRecord(r));
+           } catch (Throwable t) {
                 log.error("Caught throwable while processing records. Aborting.");
                 Runtime.getRuntime().halt(1);
             } finally {
                 MDC.remove(SHARD_ID_MDC_KEY);
+            }
+        }
+
+        /**
+        * Process a single record.
+        * 
+        * @param record
+        *            The record to be processed.
+        */
+        // ref: https://github.com/simukappu/sample-kinesis-consumer/blob/master/kcl/src/main/java/com/example/aws/v2/kinesis/consumer/DisplayConsumer.java
+        private void processSingleRecord(KinesisClientRecord record) {
+            String data = null;
+            try {
+                // For this app, we interpret the payload as UTF-8 chars.
+                data = decoder.decode(record.data()).toString();
+                // Assume this record including time field and log its age.
+                long approximateArrivalTimestamp = record.approximateArrivalTimestamp().toEpochMilli();
+                long currentTime = System.currentTimeMillis();
+                long ageOfRecordInMillisFromArrival = currentTime - approximateArrivalTimestamp;
+                log.info("PartitionKey: {} SequenceNumber: {} Arrived(milsec ago): {} Data: {}",
+                        record.partitionKey(),
+                        record.sequenceNumber(),
+                        ageOfRecordInMillisFromArrival,
+                        data);
+            } catch (CharacterCodingException e) {
+                log.error("Malformed data: " + data, e);
+            } catch (IOException e) {
+                log.info("Record does not match sample record format. Ignoring record with data; " + data);
             }
         }
 
