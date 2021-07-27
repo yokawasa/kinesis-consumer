@@ -7,12 +7,12 @@ Sample [KCL 2.X consumer](https://docs.aws.amazon.com/streams/latest/dev/enhance
 <!-- TOC -->
 
 - [kinesis-consumer](#kinesis-consumer)
-  - [Quickstart](#quickstart)
-    - [Create Kinesis Data Stream](#create-kinesis-data-stream)
-    - [Configurations](#configurations)
-    - [Create the package](#create-the-package)
-    - [Run the consumer](#run-the-consumer)
-  - [Publish data to Kinesis](#publish-data-to-kinesis)
+	- [Quickstart](#quickstart)
+		- [Create Kinesis Data Stream](#create-kinesis-data-stream)
+		- [Configurations](#configurations)
+		- [Create the package](#create-the-package)
+		- [Run the consumer](#run-the-consumer)
+	- [Publish data to Kinesis](#publish-data-to-kinesis)
 
 <!-- /TOC -->
 
@@ -101,36 +101,40 @@ Here is an sample output:
 ```
 ./helpers/run_docker_consumer.sh ./myconfig.env my-aws-profile
 
-21-06-20 05:06:18:424  INFO main kinesis.KinesisConfig:111 - applkicationName: mykclapp01 [env KINESIS_APPLICATION_NAME: mykclapp01]
-21-06-20 05:06:18:455  INFO main kinesis.KinesisConfig:113 - streamName: test-kds01 [env KINESIS_STREAM_NAME: test-kds01]
-21-06-20 05:06:18:456  INFO main kinesis.KinesisConfig:115 - region: ap-northeast-1 [env KINESIS_REGION: ap-northeast-1]
-21-06-20 05:06:18:458  INFO main kinesis.KinesisConfig:117 - initialPositionInStream: LATEST [env KINESIS_INITIAL_POSITION_IN_STREAM: null]
-21-06-20 05:06:18:460  INFO main kinesis.KinesisConfig:119 - failoverTimeMillis: 10000 [env KINESIS_FAILOVER_TIME_MILLIS: null]
-21-06-20 05:06:18:462  INFO main kinesis.KinesisConfig:121 - maxRecords: 10000 [env KINESIS_MAX_RECORDS: null]
-21-06-20 05:06:22:810  INFO main dynamodb.DynamoDBLeaseCoordinator:170 - With failover time 10000 ms and epsilon 25 ms, LeaseCoordinator will renew leases every 3308 ms, takeleases every 20050 ms, process maximum of 2147483647 leases and steal 1 lease(s) at a time.
-Press enter to shutdown
-21-06-20 05:06:22:843  INFO Thread-1 coordinator.Scheduler:263 - Initialization attempt 1
-21-06-20 05:06:22:846  INFO Thread-1 coordinator.Scheduler:264 - Initializing LeaseCoordinator
-21-06-20 05:06:29:580  INFO Thread-1 coordinator.Scheduler:269 - Syncing Kinesis shard info
-21-06-20 05:06:32:079  INFO Thread-1 coordinator.Scheduler:280 - Starting LeaseCoordinator
-21-06-20 05:06:32:311  INFO Thread-1 coordinator.Scheduler:238 - Initialization complete. Starting worker loop.
-21-06-20 05:06:52:577  INFO LeaseCoordinator-0000 dynamodb.DynamoDBLeaseTaker:397 - Worker 2d53ae8c-8669-4eb4-b445-3383a449f28b saw 1 total leases, 1 available leases, 1 workers. Target is 1 leases, I have 0 leases, I will take 1 leases
-21-06-20 05:06:52:869  INFO LeaseCoordinator-0000 dynamodb.DynamoDBLeaseTaker:203 - Worker 2d53ae8c-8669-4eb4-b445-3383a449f28b successfully took 1 leases: shardId-000000000000
-21-06-20 05:06:53:649  INFO Thread-1 coordinator.Scheduler:682 - Created new shardConsumer for : ShardInfo(shardId=shardId-000000000000, concurrencyToken=857c1159-00e8-421d-b78a-14740591945c, parentShardIds=[], checkpoint={SequenceNumber: 49618728439127861604111470615056250046941505864572338178,SubsequenceNumber: 0})
-21-06-20 05:06:53:657  INFO Thread-1 coordinator.DiagnosticEventLogger:41 - Current thread pool executor state: ExecutorStateEvent(executorName=SchedulerThreadPoolExecutor, currentQueueSize=0, activeThreads=1, coreThreads=0, leasesOwned=1, largestPoolSize=1, maximumPoolSize=2147483647)
-21-06-20 05:06:53:676  INFO ShardRecordProcessor-0000 lifecycle.BlockOnParentShardTask:78 - No need to block on parents [] of shard shardId-000000000000
-21-06-20 05:06:54:826  INFO ShardRecordProcessor-0000 polling.KinesisDataFetcher:182 - Initializing shard shardId-000000000000 with 49618728439127861604111470615056250046941505864572338178
-21-06-20 05:06:55:069  INFO ShardRecordProcessor-0000 polling.PrefetchRecordsPublisher:237 - shardId-000000000000 : Starting prefetching thread.
-21-06-20 05:06:55:128  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:186 - Initializing @ Sequence: {SequenceNumber: 49618728439127861604111470615056250046941505864572338178,SubsequenceNumber: 0}
-21-06-20 05:07:03:189  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:202 - Processing 8 record(s)
-21-06-20 05:07:03:198  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473221600657979110386752521502722
-21-06-20 05:07:03:200  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473222873656867164591479645536258
-21-06-20 05:07:03:200  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473224105552277351898814829559810
-21-06-20 05:07:03:200  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473225349536945735352373041168386
-21-06-20 05:07:03:200  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473226893335217383234035299385346
-21-06-20 05:07:03:204  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473228300524871414662600815804418
-21-06-20 05:07:03:204  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473229679909231594954626594504706
-21-06-20 05:07:03:205  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:203 - Processing record pk: 123 -- Seq: 49618728439127861604111473231230961058160524063900958722
+21-07-27 20:32:47:661  INFO main kinesis.KinesisConfig:137 - applkicationName: mykclapp01 [env KINESIS_APPLICATION_NAME: mykclapp01]
+21-07-27 20:32:47:663  INFO main kinesis.KinesisConfig:139 - streamName: test-kds01 [env KINESIS_STREAM_NAME: test-stream01]
+21-07-27 20:32:47:664  INFO main kinesis.KinesisConfig:141 - region: ap-northeast-1 [env KINESIS_REGION: ap-northeast-1]
+21-07-27 20:32:47:664  INFO main kinesis.KinesisConfig:143 - idleTimeBetweenReadsInMillis: 1000 [env KINESIS_IDLETIME_BETWEEN_READS_MILLIS: null]
+21-07-27 20:32:47:665  INFO main kinesis.KinesisConfig:145 - initialPositionInStream: LATEST [env KINESIS_INITIAL_POSITION_IN_STREAM: null]
+21-07-27 20:32:47:665  INFO main kinesis.KinesisConfig:147 - failoverTimeMillis: 10000 [env KINESIS_FAILOVER_TIME_MILLIS: null]
+21-07-27 20:32:47:667  INFO main kinesis.KinesisConfig:149 - maxRecords: 10000 [env KINESIS_MAX_RECORDS: null]
+21-07-27 20:32:48:037  INFO main dynamodb.DynamoDBLeaseCoordinator:170 - With failover time 10000 ms and epsilon 25 ms, LeaseCoordinator will renew leases every 3308 ms, takeleases every 20050 ms, process maximum of 2147483647 leases and steal 1 lease(s) at a time. Press enter to shutdown
+21-07-27 20:32:48:044  INFO Thread-1 coordinator.Scheduler:263 - Initialization attempt 1
+21-07-27 20:32:48:045  INFO Thread-1 coordinator.Scheduler:264 - Initializing LeaseCoordinator
+21-07-27 20:32:53:681  INFO Thread-1 coordinator.Scheduler:269 - Syncing Kinesis shard info
+21-07-27 20:32:54:017  INFO Thread-1 coordinator.Scheduler:280 - Starting LeaseCoordinator
+21-07-27 20:32:54:037  INFO Thread-1 coordinator.Scheduler:238 - Initialization complete. Starting worker loop.
+21-07-27 20:32:54:054  INFO LeaseCoordinator-0000 dynamodb.DynamoDBLeaseTaker:389 - Worker 5a9a7d70-61bc-46cc-9882-142a144ae2e7 needed 1 leases but none were expired, so it will steal lease shardId-000000000001 from 4bc1b045-6858-4165-a6b4-845b290e68b4
+21-07-27 20:32:54:055  INFO LeaseCoordinator-0000 dynamodb.DynamoDBLeaseTaker:397 - Worker 5a9a7d70-61bc-46cc-9882-142a144ae2e7 saw 2 total leases, 0 available leases, 2 workers. Target is 1 leases, I have 0 leases, I will take 1 leases
+21-07-27 20:32:54:108  INFO LeaseCoordinator-0000 dynamodb.DynamoDBLeaseTaker:203 - Worker 5a9a7d70-61bc-46cc-9882-142a144ae2e7 successfully took 1 leases: shardId-000000000001
+21-07-27 20:32:55:056  INFO Thread-1 coordinator.Scheduler:682 - Created new shardConsumer for : ShardInfo(shardId=shardId-000000000001, concurrencyToken=16582df2-200f-4f7e-8edc-c7dc677f0220, parentShardIds=[], checkpoint={SequenceNumber: LATEST,SubsequenceNumber: 0})
+21-07-27 20:32:55:058  INFO ShardRecordProcessor-0000 lifecycle.BlockOnParentShardTask:78 - No need to block on parents [] of shard shardId-000000000001
+21-07-27 20:32:56:091  INFO ShardRecordProcessor-0000 polling.KinesisDataFetcher:182 - Initializing shard shardId-000000000001 with LATEST
+21-07-27 20:32:56:153  INFO ShardRecordProcessor-0000 polling.PrefetchRecordsPublisher:237 - shardId-000000000001 : Starting prefetching thread.
+21-07-27 20:32:56:156  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:202 - Initializing @ Sequence: {SequenceNumber: LATEST,SubsequenceNumber: 0}
+21-07-27 20:33:14:178  INFO LeaseCoordinator-0000 dynamodb.DynamoDBLeaseTaker:397 - Worker 5a9a7d70-61bc-46cc-9882-142a144ae2e7 saw 2 total leases, 1 available leases, 1 workers. Target is 2 leases, I have 1 leases, I will take 1 leases
+21-07-27 20:33:14:198  INFO LeaseCoordinator-0000 dynamodb.DynamoDBLeaseTaker:203 - Worker 5a9a7d70-61bc-46cc-9882-142a144ae2e7 successfully took 1 leases: shardId-000000000000
+21-07-27 20:33:15:138  INFO Thread-1 coordinator.Scheduler:682 - Created new shardConsumer for : ShardInfo(shardId=shardId-000000000000, concurrencyToken=270d7175-ec4f-488a-98a0-be42e76557f3, parentShardIds=[], checkpoint={SequenceNumber: LATEST,SubsequenceNumber: 0})
+21-07-27 20:33:48:227  INFO Thread-1 coordinator.DiagnosticEventLogger:41 - Current thread pool executor state: ExecutorStateEvent(executorName=SchedulerThreadPoolExecutor, currentQueueSize=0, activeThreads=0, coreThreads=0, leasesOwned=2, largestPoolSize=2, maximumPoolSize=2147483647)
+21-07-27 20:33:48:227  INFO Thread-1 coordinator.Scheduler:677 - Sleeping ...
+21-07-27 20:34:05:270  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:218 - Processing 8 record(s)
+21-07-27 20:34:05:271  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:244 - PartitionKey: 123 SequenceNumber: 49619723974008913634774903261799205369756139518011899906 Arrived(milsec ago): 1157 Data: testmsg
+21-07-27 20:34:05:271  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:244 - PartitionKey: 123 SequenceNumber: 49619723974008913634774903261802832147214983405536018434 Arrived(milsec ago): 1144 Data: testmsg
+21-07-27 20:34:05:271  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:244 - PartitionKey: 123 SequenceNumber: 49619723974008913634774903261805249998854212663885430786 Arrived(milsec ago): 1127 Data: testmsg
+21-07-27 20:34:05:271  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:244 - PartitionKey: 123 SequenceNumber: 49619723974008913634774903261806458924673827293060136962 Arrived(milsec ago): 1111 Data: testmsg
+21-07-27 20:34:05:271  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:244 - PartitionKey: 123 SequenceNumber: 49619723974008913634774903261808876776313056551409549314 Arrived(milsec ago): 1096 Data: testmsg
+21-07-27 20:34:05:271  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:244 - PartitionKey: 123 SequenceNumber: 49619723974008913634774903261813712479591515068108374018 Arrived(milsec ago): 1083 Data: testmsg
+21-07-27 20:34:05:271  INFO ShardRecordProcessor-0000 kinesis.SampleKinesisConsumer$SampleRecordProcessor:244 - PartitionKey: 123 SequenceNumber: 49619723974008913634774903261816130331230744326457786370 Arrived(milsec ago): 1067 Data: testmsg
 ```
 
 ## Publish data to Kinesis
