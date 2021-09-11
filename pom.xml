@@ -6,7 +6,7 @@
 
     <groupId>com.github.yokawasa.kinesis</groupId>
     <artifactId>amazon-kinesis-consumer</artifactId>
-    <version>0.0.3</version>
+    <version>0.0.4</version>
     <packaging>jar</packaging>
 
     <name>amazon-kinesis-consumer</name>
